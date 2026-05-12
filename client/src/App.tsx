@@ -679,15 +679,6 @@ Background:`,
             <h3>Save the result</h3>
             <p>When the summary looks right, save it to your character vault so you can revisit or edit it later.</p>
           </article>
-
-          <article className="info-card info-card-wide">
-            <span className="info-step">04</span>
-            <h3>Expand this page later</h3>
-            <p>
-              This page can grow into a home for instructions, contact details, or anything else you want alongside the
-              character creator.
-            </p>
-          </article>
         </section>
       </main>
     </>
