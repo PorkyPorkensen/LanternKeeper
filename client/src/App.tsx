@@ -675,6 +675,23 @@ function App() {
     await sendChatMessage(trimmed)
   }
 
+  const handleComposerKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (event.key !== 'Enter' || event.shiftKey) {
+      return
+    }
+
+    event.preventDefault()
+    const trimmed = input.trim()
+    if (!trimmed || isLoading) {
+      return
+    }
+
+    setInput('')
+    void sendChatMessage(trimmed)
+  }
+
   const handleRequestSummary = () => {
     if (isLoading) return
     void sendChatMessage(
@@ -891,6 +908,7 @@ Background:`,
           value={input}
           placeholder="I want a sneaky character who still feels magical..."
           onChange={(event) => setInput(event.target.value)}
+          onKeyDown={handleComposerKeyDown}
           disabled={isLoading}
         />
         <button type="submit" disabled={isLoading || !input.trim()}>
