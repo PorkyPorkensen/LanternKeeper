@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type FormEvent } from 'react'
+import React, { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -253,7 +253,7 @@ function AuthModal({
   )
 }
 
-function KeeperTypewriter({ text }: { text: string }) {
+function KeeperTypewriter({ text, onTick }: { text: string; onTick?: () => void }) {
   const [visibleLength, setVisibleLength] = useState(0)
 
   useEffect(() => {
@@ -284,6 +284,10 @@ function KeeperTypewriter({ text }: { text: string }) {
 
     return () => window.clearInterval(timer)
   }, [text])
+
+  useEffect(() => {
+    onTick?.()
+  }, [visibleLength, onTick])
 
   const isComplete = visibleLength >= text.length
 
@@ -318,6 +322,26 @@ function App() {
   const [isChatMinimized, setIsChatMinimized] = useState(false)
   const [editingField, setEditingField] = useState<SummaryLabel | null>(null)
   const [editingValue, setEditingValue] = useState('')
+  const messagesContainerRef = useRef<HTMLElement | null>(null)
+
+  const scrollMessagesToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    if (!messagesContainerRef.current) {
+      return
+    }
+
+    messagesContainerRef.current.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior,
+    })
+  }, [])
+
+  const syncScrollDuringTyping = useCallback(() => {
+    scrollMessagesToBottom('auto')
+  }, [scrollMessagesToBottom])
+
+  useEffect(() => {
+    scrollMessagesToBottom('smooth')
+  }, [messages, isLoading, scrollMessagesToBottom])
 
   useEffect(() => {
     const syncPageFromHash = () => {
@@ -817,7 +841,11 @@ Background:`,
 
           {!isChatMinimized && (
           <>
-        <section className="messages" aria-live="polite">
+        <section
+          className="messages"
+          aria-live="polite"
+          ref={messagesContainerRef}
+        >
         {messages.map((message) => (
           (() => {
             const summaryRows =
@@ -863,7 +891,7 @@ Background:`,
                           </button>
                         </>
                       ) : (
-                        <KeeperTypewriter text={message.text} />
+                        <KeeperTypewriter text={message.text} onTick={syncScrollDuringTyping} />
                       )}
                     </div>
                   </div>
