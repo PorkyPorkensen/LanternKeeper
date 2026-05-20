@@ -32,10 +32,15 @@ type ChatHistoryItem = {
   content: string
 }
 
+type SendChatOptions = {
+  showUserMessage?: boolean
+}
+
 const summaryFields = [
   'Name',
   'Class',
   'Race',
+  'Abilities',
   'Physical Characteristics',
   'Equipment',
   'Background',
@@ -113,6 +118,7 @@ const rowsToAttributes = (rows: SummaryRow[]): CharacterAttributes => {
     Name: rows.find((row) => row.label === 'Name')?.value || 'Not Selected',
     Class: rows.find((row) => row.label === 'Class')?.value || 'Not Selected',
     Race: rows.find((row) => row.label === 'Race')?.value || 'Not Selected',
+    Abilities: rows.find((row) => row.label === 'Abilities')?.value || 'Not Selected',
     'Physical Characteristics':
       rows.find((row) => row.label === 'Physical Characteristics')?.value ||
       'Not Selected',
@@ -247,6 +253,48 @@ function AuthModal({
   )
 }
 
+function KeeperTypewriter({ text }: { text: string }) {
+  const [visibleLength, setVisibleLength] = useState(0)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (reduceMotion) {
+        setVisibleLength(text.length)
+        return
+      }
+    }
+
+    setVisibleLength(0)
+    const timer = window.setInterval(() => {
+      setVisibleLength((previous) => {
+        if (previous >= text.length) {
+          window.clearInterval(timer)
+          return text.length
+        }
+
+        // Reveal quickly for longer passages so replies still feel snappy.
+        const remaining = text.length - previous
+        const chunk =
+          remaining > 420 ? 22 : remaining > 260 ? 16 : remaining > 140 ? 10 : 7
+
+        return Math.min(text.length, previous + chunk)
+      })
+    }, 18)
+
+    return () => window.clearInterval(timer)
+  }, [text])
+
+  const isComplete = visibleLength >= text.length
+
+  return (
+    <p className="keeper-typewriter">
+      {text.slice(0, visibleLength)}
+      {!isComplete ? <span className="type-cursor" aria-hidden="true">|</span> : null}
+    </p>
+  )
+}
+
 function App() {
   const [page, setPage] = useState<AppPage>(() =>
     window.location.hash === '#how-to-use' ? 'how-to-use' : 'home',
@@ -347,6 +395,7 @@ function App() {
         Name: character.attributes?.Name || 'Not Selected',
         Class: character.attributes?.Class || 'Not Selected',
         Race: character.attributes?.Race || 'Not Selected',
+        Abilities: character.attributes?.Abilities || 'Not Selected',
         'Physical Characteristics':
           character.attributes?.['Physical Characteristics'] || 'Not Selected',
         Equipment: character.attributes?.Equipment || 'Not Selected',
@@ -573,14 +622,20 @@ function App() {
     }
   }
 
-  const sendChatMessage = async (text: string) => {
+  const sendChatMessage = async (
+    text: string,
+    options: SendChatOptions = {},
+  ) => {
+    const { showUserMessage = true } = options
     const userMessage: ChatMessage = { id: Date.now(), role: 'user', text }
     const history: ChatHistoryItem[] = messages.map((message) => ({
       role: message.role,
       content: message.text,
     }))
 
-    setMessages((prev) => [...prev, userMessage])
+    if (showUserMessage) {
+      setMessages((prev) => [...prev, userMessage])
+    }
     setIsLoading(true)
 
     try {
@@ -622,15 +677,17 @@ function App() {
 
   const handleRequestSummary = () => {
     if (isLoading) return
-    sendChatMessage(
+    void sendChatMessage(
       `Please provide a concise summary of everything we have decided so far using ONLY this exact labeled format. Do not add commentary before or after it:
 ${SUMMARY_MARKER}
 Name:
 Class:
 Race:
+Abilities:
 Physical Characteristics:
 Equipment:
 Background:`,
+      { showUserMessage: false },
     )
   }
 
@@ -710,7 +767,7 @@ Background:`,
         </div>
       </header>
 
-      <section className="intro-section">
+      <section className="intro-section intro-section-glow intro-section-fade-in">
         <div className="intro-speech">
           <img
             src="/avi1.png"
@@ -789,7 +846,7 @@ Background:`,
                           </button>
                         </>
                       ) : (
-                        <p>{message.text}</p>
+                        <KeeperTypewriter text={message.text} />
                       )}
                     </div>
                   </div>
