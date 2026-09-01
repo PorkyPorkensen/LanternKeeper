@@ -62,10 +62,18 @@ type SavedCharacter = {
   createdAt: number
 }
 
-type AppPage = 'home' | 'how-to-use'
+type AppPage = 'home' | 'how-to-use' | 'privacy'
 
 const SAVED_CHARACTERS_KEY = 'lantern-keeper-characters'
 const SUMMARY_MARKER = '[CHARACTER_SUMMARY]'
+const WELCOME_MESSAGE =
+  'Welcome, wanderer. I am the Lantern Keeper, a mystical guide dwelling in the spaces between worlds. Together, we shall kindle the spark of a character worthy of epic tales, born from the convergence of your imagination and my guidance. Tell me: what kind of hero calls to you?'
+
+const getPageFromHash = (): AppPage => {
+  if (window.location.hash === '#how-to-use') return 'how-to-use'
+  if (window.location.hash === '#privacy') return 'privacy'
+  return 'home'
+}
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
@@ -266,23 +274,28 @@ function KeeperTypewriter({ text, onTick }: { text: string; onTick?: () => void 
     }
 
     setVisibleLength(0)
-    const timer = window.setInterval(() => {
-      setVisibleLength((previous) => {
-        if (previous >= text.length) {
-          window.clearInterval(timer)
-          return text.length
-        }
+    let visibleLength = 0
+    let timer: number
 
-        // Reveal quickly for longer passages so replies still feel snappy.
-        const remaining = text.length - previous
-        const chunk =
-          remaining > 420 ? 22 : remaining > 260 ? 16 : remaining > 140 ? 10 : 7
+    const revealNextChunk = () => {
+      const remaining = text.length - visibleLength
+      const chunk = remaining > 420 ? 6 : remaining > 260 ? 4 : remaining > 140 ? 3 : 2
 
-        return Math.min(text.length, previous + chunk)
-      })
-    }, 18)
+      visibleLength = Math.min(text.length, visibleLength + chunk)
+      setVisibleLength(visibleLength)
 
-    return () => window.clearInterval(timer)
+      if (visibleLength >= text.length) {
+        return
+      }
+
+      const lastCharacter = text[visibleLength - 1]
+      const delay = /[.!?]/.test(lastCharacter) ? 150 : /[,;:]/.test(lastCharacter) ? 80 : 30
+      timer = window.setTimeout(revealNextChunk, delay)
+    }
+
+    timer = window.setTimeout(revealNextChunk, 180)
+
+    return () => window.clearTimeout(timer)
   }, [text])
 
   useEffect(() => {
@@ -300,14 +313,12 @@ function KeeperTypewriter({ text, onTick }: { text: string; onTick?: () => void 
 }
 
 function App() {
-  const [page, setPage] = useState<AppPage>(() =>
-    window.location.hash === '#how-to-use' ? 'how-to-use' : 'home',
-  )
+  const [page, setPage] = useState<AppPage>(getPageFromHash)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
       role: 'assistant',
-      text: 'I am the Lantern Keeper. Tell me what kind of hero calls to you, and I will help you shape them.',
+      text: WELCOME_MESSAGE,
     },
   ])
   const [input, setInput] = useState('')
@@ -345,7 +356,7 @@ function App() {
 
   useEffect(() => {
     const syncPageFromHash = () => {
-      setPage(window.location.hash === '#how-to-use' ? 'how-to-use' : 'home')
+      setPage(getPageFromHash())
     }
 
     syncPageFromHash()
@@ -355,7 +366,7 @@ function App() {
   }, [])
 
   const navigateToPage = (nextPage: AppPage) => {
-    const nextHash = nextPage === 'how-to-use' ? '#how-to-use' : ''
+    const nextHash = nextPage === 'home' ? '' : `#${nextPage}`
 
     if (window.location.hash !== nextHash) {
       window.location.hash = nextHash
@@ -732,19 +743,113 @@ Background:`,
     )
   }
 
-  return page === 'how-to-use' ? (
+  return page === 'privacy' ? (
     <>
       <header className="site-header">
         <div className="site-header-content">
-          <div className="header-top">
-            <h1>The Lantern Keeper</h1>
+          <div className="brand-lockup">
+            <img src="/avi1.png" alt="" className="header-avatar" aria-hidden="true" />
+            <div className="brand-copy">
+              <p className="brand-kicker">Dungeons &amp; Dragons 5e</p>
+              <h1>The Lantern Keeper</h1>
+              <p className="site-eyebrow">Guidance for heroes yet unwritten</p>
+            </div>
           </div>
-          <p className="site-eyebrow">Your DnD guide for new character creation.</p>
-          <div className="auth-container">
+          <nav className="auth-container" aria-label="Primary navigation">
             <button className="auth-button sign-in" onClick={() => navigateToPage('home')}>
               Back to Chat
             </button>
+          </nav>
+        </div>
+      </header>
+
+      <main className="privacy-page">
+        <header className="privacy-heading">
+          <p className="info-kicker">Privacy Policy</p>
+          <h2>Your data should not be a mystery.</h2>
+          <p>Effective September 1, 2026</p>
+        </header>
+
+        <section>
+          <h3>Information we collect</h3>
+          <p>
+            When you create or sign in to an account, Firebase Authentication processes your email address, account
+            identifier, and sign-in credentials. Google sign-in may also provide basic profile information. When you
+            save a character while signed in, its name, attributes, and creation time are stored in Cloud Firestore.
+          </p>
+          <p>
+            If you are signed out, saved characters are stored only in your browser&apos;s local storage. The app also
+            receives the messages and recent conversation history you submit in the character chat.
+          </p>
+        </section>
+
+        <section>
+          <h3>How we use and share information</h3>
+          <p>
+            Chat content is sent through our server to Groq to generate the Lantern Keeper&apos;s replies. We do not sell
+            personal information or use it for advertising. Information is shared only with service providers needed
+            to operate the app, including Google Firebase for authentication and character storage and Groq for AI
+            response generation. Those providers process information under their own privacy terms.
+          </p>
+        </section>
+
+        <section>
+          <h3>Storage and retention</h3>
+          <p>
+            The app does not intentionally retain chat transcripts on its server. Signed-in character records remain
+            in Firestore until you delete them. Signed-out character records remain in your browser until you delete
+            them in the app, clear your browser data, or remove the site&apos;s local storage.
+          </p>
+        </section>
+
+        <section>
+          <h3>Your choices</h3>
+          <p>
+            You may use the character chat without creating an account. You can edit or delete saved characters from
+            the character vault. To request deletion of account information or ask a privacy question, contact the
+            project owner through the public repository linked below.
+          </p>
+        </section>
+
+        <section>
+          <h3>Security and children&apos;s privacy</h3>
+          <p>
+            We use established service providers and reasonable safeguards, but no online service can guarantee
+            absolute security. Do not submit sensitive personal information in chat. The service is not directed to
+            children under 13, and we do not knowingly collect their personal information.
+          </p>
+        </section>
+
+        <section>
+          <h3>Changes and contact</h3>
+          <p>
+            We may update this policy as the app changes. Material revisions will be reflected by the effective date
+            above. Privacy questions and deletion requests can be submitted through{' '}
+            <a href="https://github.com/PorkyPorkensen/LanternKeeper/issues" target="_blank" rel="noreferrer">
+              the Lantern Keeper project&apos;s Issues page
+            </a>. Because issues are public, do not include personal or account information; ask for private contact
+            instructions instead.
+          </p>
+        </section>
+      </main>
+    </>
+  ) : page === 'how-to-use' ? (
+    <>
+      <header className="site-header">
+        <div className="site-header-content">
+          <div className="brand-lockup">
+            <img src="/avi1.png" alt="" className="header-avatar" aria-hidden="true" />
+            <div className="brand-copy">
+              <p className="brand-kicker">Dungeons &amp; Dragons 5e</p>
+              <h1>The Lantern Keeper</h1>
+              <p className="site-eyebrow">Guidance for heroes yet unwritten</p>
+            </div>
           </div>
+          <nav className="auth-container" aria-label="Primary navigation">
+            <button className="auth-button sign-in" onClick={() => navigateToPage('home')}>
+              Back to Chat
+            </button>
+          </nav>
         </div>
       </header>
 
@@ -784,11 +889,15 @@ Background:`,
     <>
       <header className="site-header">
         <div className="site-header-content">
-          <div className="header-top">
-            <h1>The Lantern Keeper</h1>
+          <div className="brand-lockup">
+            <img src="/avi1.png" alt="" className="header-avatar" aria-hidden="true" />
+            <div className="brand-copy">
+              <p className="brand-kicker">Dungeons &amp; Dragons 5e</p>
+              <h1>The Lantern Keeper</h1>
+              <p className="site-eyebrow">Guidance for heroes yet unwritten</p>
+            </div>
           </div>
-          <p className="site-eyebrow">Your DnD guide for new character creation.</p>
-          <div className="auth-container">
+          <nav className="auth-container" aria-label="Primary navigation">
             {isAuthenticated ? (
               <>
                 <span className="user-email">{userEmail}</span>
@@ -804,26 +913,9 @@ Background:`,
             <button type="button" className="header-link-button" onClick={() => navigateToPage('how-to-use')}>
               How to Use
             </button>
-          </div>
+          </nav>
         </div>
       </header>
-
-      <section className="intro-section intro-section-glow intro-section-fade-in">
-        <div className="intro-speech">
-          <img
-            src="/avi1.png"
-            alt="Lantern Keeper avatar"
-            className="keeper-avatar keeper-avatar-intro"
-          />
-          <p>
-            Welcome, wanderer. I am the Lantern Keeper, a mystical guide dwelling in the spaces between worlds.
-            Those who seek to forge their destiny in the realms of tabletop adventure often find themselves uncertain of
-            their calling, their strengths, their very essence as a hero. That is where I come in. Together, we shall
-            kindle the spark of a character worthy of epic tales, a hero born from the convergence of your imagination
-            and my guidance.
-          </p>
-        </div>
-      </section>
 
       <div className="app-container">
         <main className={`chat-app${isChatMinimized ? ' is-minimized' : ''}`}>
@@ -931,7 +1023,7 @@ Background:`,
         <textarea
           id="chat-input"
           name="chat-input"
-          rows={3}
+          rows={2}
           maxLength={1000}
           value={input}
           placeholder="I want a sneaky character who still feels magical..."
@@ -1078,6 +1170,10 @@ Background:`,
         )}
       </aside>
       </div>
+
+      <footer className="site-footer">
+        <a href="#privacy">Privacy Policy</a>
+      </footer>
 
       {showAuthModal ? (
         <AuthModal

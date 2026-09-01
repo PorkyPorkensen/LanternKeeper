@@ -212,7 +212,7 @@ app.post('/api/chat', async (req, res) => {
       : getStageInstruction(userTurnCount)
 
     const completion = await groqClient.chat.completions.create({
-      model: process.env.GROQ_MODEL ?? 'llama-3.1-8b-instant',
+      model: process.env.GROQ_MODEL ?? 'openai/gpt-oss-20b',
       messages: [
         {
           role: 'system',

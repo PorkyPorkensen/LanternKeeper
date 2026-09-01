@@ -15,51 +15,76 @@ body {
 }
 
 .site-header {
-  display: flex;
-  align-items: center;
-  background: rgba(8, 8, 15, 0.295);
-  padding: 28px 18px;
-  border-bottom: 1px solid #3a3a5a;
+  position: relative;
+  background: rgba(7, 8, 9, 0.88);
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(166, 128, 96, 0.5);
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   flex-shrink: 0;
-  backdrop-filter: blur(8px);
-  margin-bottom: 24px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
 }
 
 .site-header-content {
-  max-width: 920px;
+  width: min(1120px, 100%);
   margin-inline: auto;
-}
-
-.header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 32px;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.header-avatar {
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(192, 160, 128, 0.72);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 20px rgba(166, 128, 96, 0.2);
+}
+
+.brand-copy {
+  min-width: 0;
+}
+
+.brand-kicker {
+  margin: 0 0 2px;
+  color: #b89773;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .site-header h1 {
-  margin: 0 auto;
+  margin: 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 2.8rem;
-  line-height: 1;
+  font-size: 2.25rem;
+  line-height: 0.95;
   color: #f0e6d2;
 }
 
 .site-eyebrow {
-  margin: 10px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  font-size: 0.72rem;
-  color: #b8a890;
-  font-weight: 700;
+  margin: 5px 0 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: #b9ad9b;
 }
 
 .auth-container {
   display: flex;
   gap: 12px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .user-email {
@@ -71,7 +96,7 @@ body {
 .auth-button {
   padding: 8px 16px;
   border: 1px solid #6a5a4a;
-  border-radius: 8px;
+  border-radius: 6px;
   font: inherit;
   font-weight: 600;
   font-size: 0.9rem;
@@ -104,14 +129,14 @@ body {
 
 .header-link-button {
   border: 1px solid rgba(184, 168, 144, 0.35);
-  background: rgba(20, 16, 12, 0.55);
+  background: transparent;
   color: #e8d5c4;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 8px 12px;
+  border-radius: 6px;
   font: inherit;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   cursor: pointer;
   transition: all 180ms ease;
 }
@@ -125,7 +150,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 18px;
+  padding: 28px 18px 18px;
   flex: 1;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.4);
@@ -136,6 +161,70 @@ body {
   margin: 18px auto 28px;
   display: grid;
   gap: 18px;
+}
+
+.privacy-page {
+  width: min(760px, calc(100% - 32px));
+  margin: 28px auto 48px;
+  padding: 30px;
+  border: 1px solid #5a4a3a;
+  border-radius: 12px;
+  background: rgba(18, 15, 12, 0.9);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.privacy-heading {
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(166, 128, 96, 0.35);
+}
+
+.privacy-heading h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #f0e6d2;
+}
+
+.privacy-heading > p:last-child,
+.privacy-page section p {
+  color: #cdbfab;
+  line-height: 1.7;
+}
+
+.privacy-heading > p:last-child {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+}
+
+.privacy-page section {
+  padding-top: 20px;
+}
+
+.privacy-page section h3 {
+  margin: 0 0 8px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  color: #eadbc6;
+}
+
+.privacy-page section p {
+  margin: 0 0 10px;
+}
+
+.privacy-page a,
+.site-footer a {
+  color: #d8b48a;
+  text-underline-offset: 3px;
+}
+
+.site-footer {
+  padding: 12px 18px 20px;
+  text-align: center;
+  background: rgba(7, 8, 9, 0.82);
+  border-top: 1px solid rgba(166, 128, 96, 0.25);
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  font-size: 0.78rem;
 }
 
 .info-hero,
@@ -288,7 +377,7 @@ body {
   width: min(920px, 95%);
   margin: 0 auto 12px;
   min-height: auto;
-  max-height: min(950px, calc(100svh - 220px));
+  max-height: min(950px, calc(100svh - 150px));
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   font-family: 'Manrope', 'Segoe UI', sans-serif;
@@ -297,6 +386,7 @@ body {
   background: rgba(25, 20, 15, 0.75);
   border: 1px solid #5a4a3a;
   border-radius: 20px;
+  animation: chat-reveal 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .chat-app.is-minimized {
@@ -307,53 +397,12 @@ body {
   overflow: visible;
 }
 
-.intro-section {
-  width: min(820px, 90%);
-  margin: 12px auto 0;
-  padding: 16px 18px;
-  border: 1px solid #5a4a3a;
-  border-radius: 20px;
-  background: rgba(25, 20, 15, 0.85);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
-}
-
-.intro-section-glow {
-  box-shadow:
-    0 0 0 1px rgba(166, 128, 96, 0.25),
-    0 0 22px rgba(166, 128, 96, 0.28),
-    0 10px 24px rgba(0, 0, 0, 0.5);
-}
-
-.intro-section-fade-in {
-  animation: intro-fade-in 650ms ease-out both;
-}
-
-.intro-section p {
-  margin: 0;
-  color: #d5c5b5;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.intro-speech {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
 .keeper-avatar {
   border-radius: 999px;
   object-fit: cover;
   border: 1px solid rgba(166, 128, 96, 0.8);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   flex-shrink: 0;
-}
-
-.keeper-avatar-intro {
-  width: 74px;
-  height: 74px;
-  place-self: center;
 }
 
 .messages,
@@ -423,12 +472,14 @@ body {
 
 .keeper-typewriter {
   white-space: pre-wrap;
+  text-shadow: 0 0 14px rgba(216, 180, 138, 0.08);
 }
 
 .type-cursor {
   margin-left: 1px;
   color: #d8b48a;
-  animation: cursor-blink 550ms steps(1, end) infinite;
+  text-shadow: 0 0 8px rgba(216, 180, 138, 0.8);
+  animation: cursor-blink 1100ms ease-in-out infinite;
 }
 
 .keeper-avatar-chat {
@@ -475,7 +526,7 @@ body {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
-  padding: 12px 12px;
+  padding: 9px;
   width: min(720px, 100%);
   margin-inline: auto;
   border: 1px solid #5a4a3a;
@@ -485,11 +536,12 @@ body {
 }
 
 .composer textarea {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid #5a4a3a;
   border-radius: 10px;
   font: inherit;
   font-size: 0.9rem;
+  line-height: 1.4;
   resize: none;
   background: rgba(40, 35, 30, 0.6);
   color: #e8d5c4;
@@ -586,25 +638,25 @@ body {
   }
 }
 
-@keyframes cursor-blink {
-  0%,
-  40% {
-    opacity: 1;
-  }
-  41%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes intro-fade-in {
+@keyframes chat-reveal {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 0.25;
+  }
+
+  50% {
+    opacity: 1;
   }
 }
 
@@ -989,27 +1041,37 @@ body {
 
 @media (max-width: 760px) {
   .site-header {
-    padding: 20px 10px;
+    padding: 14px 12px;
+  }
+
+  .site-header-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-lockup {
+    justify-content: center;
   }
 
   .chat-app {
-    max-height: calc(100svh - 180px);
-  }
-
-  .header-top {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    max-height: calc(100svh - 210px);
   }
 
   .site-header h1 {
-    font-size: 2rem;
+    font-size: 1.85rem;
+  }
+
+  .header-avatar {
+    width: 48px;
+    height: 48px;
   }
 
   .auth-container {
     width: 100%;
     gap: 8px;
     flex-wrap: wrap;
+    justify-content: center;
   }
 
   .auth-button {
@@ -1018,7 +1080,7 @@ body {
   }
 
   .auth-button.sign-in {
-    flex: 1;
+    flex: 0 1 auto;
   }
 
   .header-link-button {
@@ -1030,6 +1092,16 @@ body {
     margin: 12px auto 20px;
     gap: 12px;
     padding: 0 12px;
+  }
+
+  .privacy-page {
+    width: calc(100% - 24px);
+    margin: 18px auto 28px;
+    padding: 20px 18px;
+  }
+
+  .privacy-heading h2 {
+    font-size: 2rem;
   }
 
   .info-hero,
@@ -1059,34 +1131,32 @@ body {
     border-radius: 16px;
   }
 
-  .intro-section {
-    padding: 12px 14px;
-    border-radius: 16px;
-    margin-bottom: 8px;
-  }
-
-  .intro-section p {
-    font-size: 0.9rem;
-  }
-
-  .intro-speech {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .keeper-avatar-intro {
-    width: 56px;
-    height: 56px;
-    align-self: center;
-  }
-
   .messages {
     padding: 8px 0;
   }
 
   .message {
     max-width: min(720px, 95%);
+  }
+
+  .assistant-message-layout {
+    position: relative;
+    display: block;
+  }
+
+  .assistant-message-content .message-role {
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 40px;
+  }
+
+  .keeper-avatar-chat {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
   }
 
   .summary-row {
@@ -1097,7 +1167,7 @@ body {
   .composer {
     grid-template-columns: 1fr;
     border-radius: 0 0 16px 16px;
-    padding: 12px;
+    padding: 9px;
   }
 
   .composer button {
@@ -1125,11 +1195,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .chat-app,
   .message {
-    animation: none;
-  }
-
-  .intro-section-fade-in {
     animation: none;
   }
 
